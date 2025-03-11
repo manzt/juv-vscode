@@ -1,0 +1,52 @@
+{
+	"name": "juv",
+	"displayName": "juv",
+	"description": "Reproducible Jupyter notebooks, powered by uv.",
+	"version": "0.0.0",
+	"engines": {
+		"vscode": "^1.98.0"
+	},
+	"publisher": "manzt",
+	"repository": "https://github.com/manzt/juv-vscode",
+	"categories": ["Other"],
+	"activationEvents": [],
+	"main": "./src/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "juv.init",
+				"title": "juv: Initialize a Notebook"
+			},
+			{
+				"command": "juv.sync",
+				"title": "juv: Sync or Create a Virtual Enviroment",
+				"when": "notebookEditorFocused"
+			},
+			{
+				"command": "juv.add",
+				"title": "juv: Add Dependency",
+				"when": "notebookEditorFocused"
+			},
+			{
+				"command": "juv.remove",
+				"title": "juv: Remove Dependency",
+				"when": "notebookEditorFocused"
+			},
+			{
+				"command": "juv.run",
+				"title": "juv: Run a Notebook",
+				"when": "notebookEditorFocused"
+			}
+		]
+	},
+	"scripts": {
+		"lint": "biome ci"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/node": "20.x",
+		"@types/vscode": "^1.98.0",
+		"typescript": "^5.8.2"
+	},
+	"packageManager": "pnpm@10.0.0"
+}
