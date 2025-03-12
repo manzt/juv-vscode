@@ -119,6 +119,21 @@ module.exports = {
 				}
 				await vscode.commands.executeCommand("juv.sync");
 			}),
+			vscode.workspace.onDidOpenNotebookDocument(async (notebook) => {
+				if (
+					vscode.workspace.getWorkspaceFolder(notebook.uri) &&
+					notebook.getCells().some(tryParseInlineScriptMetadata)
+				) {
+					const selection = await vscode.window.showInformationMessage(
+						"Notebook includes PEP 723 metadata. Create or sync an isolated virtual environment?",
+						"Yes",
+						"No",
+					);
+					if (selection === "Yes") {
+						await vscode.commands.executeCommand("juv.sync");
+					}
+				}
+			}),
 		);
 	},
 	deactivate() {},
@@ -182,7 +197,7 @@ function registerCommand(...args) {
 			/** @type {string} */
 			let message;
 			if (error instanceof JuvError) {
-				message = `Juv command failed: \`juv ${args.join(" ")}\`
+				message = `Juv command failed: \`juv ${error.args.join(" ")}\`
 
 Error: ${JSON.stringify(error.message)}`;
 			} else if (error instanceof AssertionError) {

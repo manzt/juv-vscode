@@ -9,5 +9,5 @@ Python](https://code.visualstudio.com/docs/languages/python) extension and for
 [`juv`](https://github.com/manzt/juv) CLI to be installed globally.
 
 ```sh
-uvx tool install juv
+uv tool install juv@latest
 ```
