@@ -15,11 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          run_install: true
+          node-version: 'latest'
       - run: |
-          pnpm tsc
+          npm ci
+          npx tsc
 
   Lint:
     runs-on: ubuntu-latest

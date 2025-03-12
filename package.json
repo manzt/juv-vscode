@@ -2,7 +2,7 @@
 	"name": "juv",
 	"displayName": "juv",
 	"description": "Reproducible Jupyter notebooks, powered by uv.",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.98.0"
 	},
@@ -48,5 +48,8 @@
 		"@types/vscode": "^1.98.0",
 		"typescript": "^5.8.2"
 	},
-	"packageManager": "pnpm@10.0.0"
+	"packageManager": "pnpm@10.0.0",
+	"dependencies": {
+		"toml": "^3.0.0"
+	}
 }

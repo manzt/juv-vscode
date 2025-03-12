@@ -1,6 +1,8 @@
-const vscode = require("vscode");
 const fs = require("node:fs");
 const childProcess = require("node:child_process");
+
+const vscode = require("vscode");
+const toml = require("toml");
 
 const inlineScriptMeta = `# /// script
 # requires-python = ">=3.13"
@@ -31,8 +33,10 @@ module.exports = {
 				const editor = vscode.window.activeNotebookEditor;
 				assert(editor, "No active notebook.");
 				const packagesInput = await vscode.window.showInputBox({
-					title: "packages",
-					placeHolder: "polars anywidget",
+					title: "Packages",
+					value: "anywidget polars",
+					prompt: "Enter package names separated by spaces",
+					valueSelection: [0, "anywidget polars".length],
 				});
 				const packages = (packagesInput ?? "").split(" ").filter(Boolean);
 				if (packages.length === 0) {
@@ -45,11 +49,17 @@ module.exports = {
 			vscode.commands.registerCommand("juv.remove", async () => {
 				const editor = vscode.window.activeNotebookEditor;
 				assert(editor, "No active notebook.");
-				const packagesInput = await vscode.window.showInputBox({
-					title: "packages",
+				const cell = editor.notebook
+					.getCells()
+					.find(tryParseInlineScriptMetadata);
+				assert(cell, "No packages found.");
+				const meta = tryParseInlineScriptMetadata(cell);
+				assert(meta, "No packages found.");
+				const packages = await vscode.window.showQuickPick(meta.dependencies, {
+					canPickMany: true,
 				});
-				const packages = (packagesInput ?? "").split(" ").filter(Boolean);
-				if (packages.length === 0) {
+				if (!packages?.length) {
+					// none selected
 					return;
 				}
 				await editor.notebook.save();
@@ -105,10 +115,12 @@ module.exports = {
 				const editor = vscode.window.activeNotebookEditor;
 				assert(editor, "No active notebook.");
 				await vscode.commands.executeCommand("juv.sync");
+				// restart the kernel and rerun
 				await vscode.commands.executeCommand(
-					"notebook.cell.execute",
-					editor.notebook.getCells(),
+					"jupyter.restartkernelandrunallcells",
 				);
+				// just run the notebook... this can be problematic
+				// await vscode.commands.executeCommand("notebook.execute");
 			}),
 		);
 	},
@@ -216,4 +228,26 @@ function juv(options) {
 			reject(new AbortError());
 		});
 	});
+}
+
+/**
+ * @param {vscode.NotebookCell} cell
+ * @returns {{ dependencies: Array<string> } | undefined}
+ */
+function tryParseInlineScriptMetadata(cell) {
+	if (cell.kind !== vscode.NotebookCellKind.Code) {
+		return undefined;
+	}
+	const contents = cell.document.getText();
+	const match = contents.match(
+		/^# \/\/\/ script$\s(?<content>(^#(| .*)$\s?)+)^# \/\/\/$/m,
+	);
+	if (!match?.groups) {
+		return undefined;
+	}
+	const tomlString = match.groups.content
+		.split("\n")
+		.map((line) => (line.startsWith("# ") ? line.slice(2) : line.slice(1)))
+		.join("\n");
+	return toml.parse(tomlString);
 }
