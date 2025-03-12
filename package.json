@@ -2,7 +2,7 @@
 	"name": "juv",
 	"displayName": "juv",
 	"description": "Reproducible Jupyter notebooks, powered by uv.",
-	"version": "0.0.1",
+	"version": "0.0.3",
 	"engines": {
 		"vscode": "^1.98.0"
 	},
@@ -14,33 +14,39 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "juv.init",
-				"title": "juv: Initialize a Notebook"
-			},
-			{
 				"command": "juv.sync",
-				"title": "juv: Sync or Create a Virtual Enviroment",
-				"when": "notebookEditorFocused"
+				"title": "Sync or Create a Notebook Virtual Environment",
+				"icon": "$(sync)",
+				"category": "juv"
 			},
 			{
 				"command": "juv.add",
-				"title": "juv: Add Dependency",
-				"when": "notebookEditorFocused"
+				"title": "Add a Notebook Dependency",
+				"icon": "$(add)",
+				"category": "juv"
 			},
 			{
 				"command": "juv.remove",
-				"title": "juv: Remove Dependency",
-				"when": "notebookEditorFocused"
+				"title": "Remove Notebook Dependency",
+				"icon": "$(remove)",
+				"category": "juv"
 			},
 			{
-				"command": "juv.run",
-				"title": "juv: Run a Notebook",
-				"when": "notebookEditorFocused"
+				"command": "juv.main",
+				"title": "Manage Notebook Dependencies",
+				"shortTitle": "juv",
+				"icon": "$(package)",
+				"category": "juv"
 			}
-		]
-	},
-	"scripts": {
-		"lint": "biome ci"
+		],
+		"menus": {
+			"notebook/toolbar": [
+				{
+					"command": "juv.main",
+					"group": "navigation@1"
+				}
+			]
+		}
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",

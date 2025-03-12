@@ -4,39 +4,17 @@ const childProcess = require("node:child_process");
 const vscode = require("vscode");
 const toml = require("toml");
 
-const inlineScriptMeta = `# /// script
-# requires-python = ">=3.13"
-# dependencies = []
-# ///`.trim();
-
 module.exports = {
 	/** @param {vscode.ExtensionContext} context */
 	async activate(context) {
 		context.subscriptions.push(
-			registerCommand("juv.init", async () => {
-				await vscode.commands.executeCommand("ipynb.newUntitledIpynb");
-				const editor = vscode.window.activeNotebookEditor;
-				assert(editor, "Failed to create a new notebook.");
-				const edit = new vscode.WorkspaceEdit();
-				edit.set(editor.notebook.uri, [
-					vscode.NotebookEdit.insertCells(0, [
-						new vscode.NotebookCellData(
-							vscode.NotebookCellKind.Code,
-							inlineScriptMeta,
-							"python",
-						),
-					]),
-				]);
-				await vscode.workspace.applyEdit(edit);
-			}),
-			vscode.commands.registerCommand("juv.add", async () => {
+			registerCommand("juv.add", async () => {
 				const editor = vscode.window.activeNotebookEditor;
 				assert(editor, "No active notebook.");
 				const packagesInput = await vscode.window.showInputBox({
-					title: "Packages",
-					value: "anywidget polars",
+					title: "Add packages",
+					placeHolder: "package(s)",
 					prompt: "Enter package names separated by spaces",
-					valueSelection: [0, "anywidget polars".length],
 				});
 				const packages = (packagesInput ?? "").split(" ").filter(Boolean);
 				if (packages.length === 0) {
@@ -46,7 +24,7 @@ module.exports = {
 				await juv({ args: ["add", editor.notebook.uri.fsPath, ...packages] });
 				await vscode.commands.executeCommand("juv.sync");
 			}),
-			vscode.commands.registerCommand("juv.remove", async () => {
+			registerCommand("juv.remove", async () => {
 				const editor = vscode.window.activeNotebookEditor;
 				assert(editor, "No active notebook.");
 				const cell = editor.notebook
@@ -56,6 +34,7 @@ module.exports = {
 				const meta = tryParseInlineScriptMetadata(cell);
 				assert(meta, "No packages found.");
 				const packages = await vscode.window.showQuickPick(meta.dependencies, {
+					title: "Remove packages",
 					canPickMany: true,
 				});
 				if (!packages?.length) {
@@ -68,7 +47,7 @@ module.exports = {
 				});
 				await vscode.commands.executeCommand("juv.sync");
 			}),
-			vscode.commands.registerCommand("juv.sync", async () => {
+			registerCommand("juv.sync", async () => {
 				const editor = vscode.window.activeNotebookEditor;
 				assert(editor, "No active notebook.");
 				const workspaceFolder = vscode.workspace.getWorkspaceFolder(
@@ -103,24 +82,42 @@ module.exports = {
 						});
 					},
 				);
-				// TODO: figure out how to auto select/activate the `enviroment`.
-				// let conn = await getPythonKernelConnectionMetadata(venv, pythonApi);
-				// await vscode.commands.executeCommand("notebook.selectKernel", {
-				//   id: conn.interpreter.id,
-				//   extension: 'juv',
-				//   // extension: 'ms-toolsai.jupyter',
-				// });
 			}),
-			vscode.commands.registerCommand("juv.run", async () => {
-				const editor = vscode.window.activeNotebookEditor;
-				assert(editor, "No active notebook.");
-				await vscode.commands.executeCommand("juv.sync");
-				// restart the kernel and rerun
-				await vscode.commands.executeCommand(
-					"jupyter.restartkernelandrunallcells",
+			registerCommand("juv.main", async () => {
+				await vscode.window.activeNotebookEditor?.notebook.save();
+				const result = await vscode.window.showQuickPick(
+					[
+						{
+							label: "Sync Environment",
+							detail:
+								"Create or sync a virtual environment with notebook requirements",
+							picked: true,
+						},
+						{
+							label: "Add Packages",
+							detail: "Add a new notebook requirement",
+						},
+						{
+							label: "Remove Packages",
+							detail: "Remove an existing notebook requirement",
+						},
+					],
+					{
+						title: "juv",
+					},
 				);
-				// just run the notebook... this can be problematic
-				// await vscode.commands.executeCommand("notebook.execute");
+				if (!result) {
+					return;
+				}
+				if (result.label.includes("Add")) {
+					await vscode.commands.executeCommand("juv.add");
+					return;
+				}
+				if (result.label.includes("Remove")) {
+					await vscode.commands.executeCommand("juv.remove");
+					return;
+				}
+				await vscode.commands.executeCommand("juv.sync");
 			}),
 		);
 	},
