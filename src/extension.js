@@ -5,6 +5,13 @@ const childProcess = require("node:child_process");
 const vscode = require("vscode");
 const toml = require("toml");
 
+const logChannel = vscode.window.createOutputChannel("juv");
+
+/** @param {string} message */
+function log(message) {
+  logChannel.appendLine(`[${new Date().toISOString()}] ${message}`);
+}
+
 module.exports = {
   /** @param {vscode.ExtensionContext} context */
   activate(context) {
@@ -217,18 +224,64 @@ ${JSON.stringify(error)}
 }
 
 /**
+ * @param {string} command
+ */
+function commandExists(command) {
+  const result = childProcess.spawnSync(command, ["--version"], {
+    stdio: "ignore",
+    shell: true,
+  });
+  return result.status === 0;
+}
+
+/**
+ * Determines the executable for `juv`, considering user configuration, absolute paths, and fallbacks.
+ */
+function getJuvExecutable() {
+  const config = vscode.workspace.getConfiguration("juv");
+  /** @type {string | undefined} */
+  const userDefined = config.get("executable");
+
+  if (userDefined) {
+    const [executable, ...args] = userDefined.split(" ");
+    assert(
+      commandExists(executable),
+      `Executable not found: ${JSON.stringify(executable)}.`,
+    );
+    return { executable, args };
+  }
+
+  // TODO: Check version?
+
+  if (commandExists("juv")) {
+    return { executable: "juv", args: [] };
+  }
+
+  if (commandExists("uvx")) {
+    return { executable: "uvx", args: ["juv"] };
+  }
+
+  throw new AssertionError(
+    "Could not find 'juv' or 'uv' executable. Please install one of them or specify a path for the `juv` executable in your VS Code settings.",
+  );
+}
+
+/**
  * @param {{args: Array<string>; signal?: AbortSignal }} options
  * @returns {Promise<{ stdout: string; stderr: string }>}
  */
 function juv(options) {
+  const { executable, args } = getJuvExecutable();
+  log(`${executable} ${JSON.stringify([...args, ...options.args])}`);
+
   return new Promise((resolve, reject) => {
     if (options.signal?.aborted) {
       reject(new AbortError());
     }
 
     const process = childProcess.execFile(
-      "juv",
-      options.args,
+      executable,
+      [...args, ...options.args],
       (error, stdout, stderr) => {
         if (error) {
           reject(new JuvError(error.message, options.args));

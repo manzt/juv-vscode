@@ -2,7 +2,7 @@
   "name": "juv",
   "displayName": "juv",
   "description": "Reproducible Jupyter notebooks, powered by uv.",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "engines": {
     "vscode": "^1.86.0"
   },
@@ -12,6 +12,16 @@
   "activationEvents": [],
   "main": "./src/extension.js",
   "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "juv Settings",
+      "properties": {
+        "juv.executable": {
+          "type": "string",
+          "description": "Path to the juv executable or a command to run juv CLI."
+        }
+      }
+    },
     "commands": [
       {
         "command": "juv.sync",
