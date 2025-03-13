@@ -1,8 +1,9 @@
 {
   "name": "juv",
   "displayName": "juv",
-  "description": "Reproducible Jupyter notebooks, powered by uv.",
-  "version": "0.0.8",
+  "description": "Create, manage, and run Jupyter notebooks with their dependencies.",
+  "version": "0.0.9",
+  "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.86.0"
   },
