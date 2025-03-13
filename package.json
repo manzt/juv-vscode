@@ -2,14 +2,14 @@
   "name": "juv",
   "displayName": "juv",
   "description": "Create, manage, and run Jupyter notebooks with their dependencies.",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.86.0"
   },
   "publisher": "manzt",
   "repository": "https://github.com/manzt/juv-vscode",
-  "categories": ["Other"],
+  "categories": ["Notebooks", "Data Science"],
   "activationEvents": [],
   "main": "./src/extension.js",
   "contributes": {
