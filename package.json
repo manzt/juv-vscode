@@ -2,9 +2,9 @@
 	"name": "juv",
 	"displayName": "juv",
 	"description": "Reproducible Jupyter notebooks, powered by uv.",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"engines": {
-		"vscode": "^1.98.0"
+		"vscode": "^1.86.0"
 	},
 	"publisher": "manzt",
 	"repository": "https://github.com/manzt/juv-vscode",
@@ -51,10 +51,9 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@types/node": "20.x",
-		"@types/vscode": "^1.98.0",
+		"@types/vscode": "^1.86.0",
 		"typescript": "^5.8.2"
 	},
-	"packageManager": "pnpm@10.0.0",
 	"dependencies": {
 		"toml": "^3.0.0"
 	}
