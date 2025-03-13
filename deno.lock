@@ -1,0 +1,39 @@
+{
+  "version": "4",
+  "specifiers": {
+    "npm:@types/node@^22.13.10": "22.13.10",
+    "npm:@types/vscode@^1.86.0": "1.98.0",
+    "npm:toml@3": "3.0.0",
+    "npm:typescript@^5.8.2": "5.8.2"
+  },
+  "npm": {
+    "@types/node@22.13.10": {
+      "integrity": "sha512-I6LPUvlRH+O6VRUqYOcMudhaIdUVWfsjnZavnsraHvpBwaEyMN29ry+0UVJhImYL16xsscu0aske3yA+uPOWfw==",
+      "dependencies": [
+        "undici-types"
+      ]
+    },
+    "@types/vscode@1.98.0": {
+      "integrity": "sha512-+KuiWhpbKBaG2egF+51KjbGWatTH5BbmWQjSLMDCssb4xF8FJnW4nGH4nuAdOOfMbpD0QlHtI+C3tPq+DoKElg=="
+    },
+    "toml@3.0.0": {
+      "integrity": "sha512-y/mWCZinnvxjTKYhJ+pYxwD0mRLVvOtdS2Awbgxln6iEnt4rk0yBxeSBHkGJcPucRiG0e55mwWp+g/05rsrd6w=="
+    },
+    "typescript@5.8.2": {
+      "integrity": "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="
+    },
+    "undici-types@6.20.0": {
+      "integrity": "sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg=="
+    }
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@types/node@^22.13.10",
+        "npm:@types/vscode@^1.86.0",
+        "npm:toml@3",
+        "npm:typescript@^5.8.2"
+      ]
+    }
+  }
+}

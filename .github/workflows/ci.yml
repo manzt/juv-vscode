@@ -11,22 +11,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  Test:
+  typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: denoland/setup-deno@v2
         with:
-          node-version: 'latest'
+          deno-version: v2.x
       - run: |
-          npm ci
-          npx tsc
+          deno install
+          deno check .
 
-  Lint:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: biomejs/setup-biome@v2
+      - uses: denoland/setup-deno@v2
         with:
-          version: latest
-      - run: biome ci .
+          deno-version: v2.x
+      - run: |
+          deno fmt --check
+          deno lint
