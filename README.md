@@ -1,7 +1,7 @@
-# juv
+# juv for VS Code
 
-Official VS Code extension for [juv](https://github.com/manzt/juv). Create,
-manage, and run Jupyter notebooks with their dependencies.
+Create & manage Jupyter notebooks with their dependencies with
+[**juv**](https://github.com/manzt/juv).
 
 ![](https://github.com/user-attachments/assets/c3b068f1-ec7a-4fb8-8542-eeb264d2935a)
 
